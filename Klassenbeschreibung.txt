@@ -1,0 +1,87 @@
+Subject {
+
+This is the abstract class definition for all subjects in the model that are observed for changes.
+
+	Attributes:
+	private List<Observer> observers: a list of all the classes observing the concrete subject for changes.
+
+	Methods:
+	public void attach(Observer observer): adds a new observer to the subject's list of observers
+	public void detach(Observer observer): removes an observer to the subject's list of observers
+	public void notify(): notifies all the observers in its list when changes have been made
+	
+}
+
+JobSettings{
+
+This class contains all the required information (selected by the user) that tells the system which state it should classify/run in.
+This class is observed for changes by "JobSettingsView"
+
+	Attributes:
+		private NeuralNetwork neuralNetwork: indicates which neural network is to be used to classify the image.
+		private Performance performance: indicates which performance mode the user has selected to run the classification in.
+		private List<Image> images: contains the list of images to be classified.
+
+	Methods:
+		public NeuralNetwork getNeuralNetwork(): returns the current neural network selected by the user
+		public void setNeuralNetwork(NeuralNetwork neuralNetwork): changes the neuralNetwork attribute to the new selected network.
+		public Performance getPerformance(): returns the current performance mode selected by the user
+		public void setPerformance(Performance performance): changes the performance attribute to the new selected performance mode.
+		public ImageList getImage(): returns the list of the images to be classified
+		public void addImage(Image image): adds an image to the list of images to classify.
+
+}
+
+UISettings{
+	
+This class contains all the required information (selected by the user) that tells the system what it should look like.
+This class is observed for changes by "UISettingsView"
+
+	Attributes:
+		private ThemeUI theme:
+		private bool topology:
+		private bool results:
+
+	Methods:
+		public ThemeUI getTheme(): returns the current theme displayed by the system.
+		public void setTheme(ThemeUI theme): sets the theme to the new one selected by the user.
+		public bool showTopology(): returns true if the topology is currently being displayed and false if not.
+		public void setTheme(ThemeUI theme): changes the current theme to the new option selected by the user
+		public ThemeUI getTheme(): gets the current theme being used/displayed.
+		public void setTopology(bool b): sets the topology attribute to true if the user wishes to view the network topology and false if not.
+		public void setResults(bool b): sets the results attribute to true if the system has classified and results are available and false if not.
+
+}
+
+
+Results {
+
+This class stores the results of all the image classification done by the system in a session.
+	
+	Attributes:
+		private List<ClassificationResult> resultsList: contains the results for previous classifications
+
+	Methods:
+		public List<ClassificationResult> getResultsList(): returns the results stored in the list.
+		public void addResult(ClassificationResult result): adds new classification results to the list.
+
+}
+
+AppModel {
+	
+This class contains information about all the other subjects for quicker access from parts of the main window that require information from each of them.
+
+	Attributes:
+		private UISettings uiSettings: instance of the UISettings subject.
+		private JobSettings jobSettings: instance of the JobSettings subject.
+		private Results results: instance of the Results subject.
+
+	Methods:
+		public UISettings getUISettings(): returns the instance of UISettings stored
+		public void setUISettings(UISettings uiSettings): stores the UISettings instance
+		public JobSettings getJobSettings(): returns the instance of JobSettings stored
+		public void setJobSettings(JobSettings jobSettings): stores the JobSettings instance
+		public Results getResults(): returns the instance of Results stored.
+		public void setResults(Results results): stores the Results instance
+
+}
