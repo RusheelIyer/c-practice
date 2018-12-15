@@ -22,11 +22,8 @@ This class also uses the singleton design pattern.
 		private NeuralNetwork neuralNetwork: indicates which neural network is to be used to classify the image.
 		private Performance performance: indicates which performance mode the user has selected to run the classification in.
 		private List<Image> images: contains the list of images to be classified.
-		private JobSettings jobSettings: represents the single possible instance of the class
 
 	Methods:
-		private JobSettings(): the private constructor method
-		public JobSettings getJobSettings(): returns the single instance of the class if one exists. Otherwise, the method creates a new instance, stores it as the single instance of the class, and returns it.
 		public NeuralNetwork getNeuralNetwork(): returns the current neural network selected by the user
 		public void setNeuralNetwork(NeuralNetwork neuralNetwork): changes the neuralNetwork attribute to the new selected network.
 		public Performance getPerformance(): returns the current performance mode selected by the user
@@ -46,11 +43,8 @@ This class also uses the singleton design pattern.
 		private ThemeUI theme: stores the currently selected and displayed theme
 		private bool topology: stores true if the user has selected to view the topology and false if not.
 		private bool results: stores true if results are being displayed and false if not.
-		private UISettings uiSettings: represents the single possible instance of the class
 
 	Methods:
-		private UISettings(): the private constructor method
-		public UISettings getUISettings(): returns the single instance of the class if one exists. Otherwise, the method creates a new instance, stores it as the single instance of the class, and returns it.
 		public ThemeUI getTheme(): returns the current theme displayed by the system.
 		public void setTheme(ThemeUI theme): sets the theme to the new one selected by the user.
 		public bool showTopology(): returns true if the topology is currently being displayed and false if not.
@@ -69,12 +63,9 @@ This class is observed for changes by "ResultsView".
 This class also uses the singleton design pattern.
 	
 	Attributes:
-		private Results results: represents the single possible instance of the class
 		private List<ClassificationResult> resultsList: contains the results for previous classifications
 
 	Methods:
-		private Results(): the private constructor method
-		public Results getResults(): returns the single instance of the class if one exists. Otherwise, the method creates a new instance, stores it as the single instance of the class, and returns it.
 		public List<ClassificationResult> getResultsList(): returns the results stored in the list.
 		public void addResult(ClassificationResult result): adds new classification results to the list.
 
@@ -87,14 +78,11 @@ This class is observed for changes by "AppModelView".
 This class also uses the singleton design pattern.
 
 	Attributes:
-		private AppModel appModel: represents the single possile instance of the class
 		private UISettings uiSettings: instance of the UISettings subject.
 		private JobSettings jobSettings: instance of the JobSettings subject.
 		private Results results: instance of the Results subject.
 
 	Methods:
-		private AppModel(): the private constructor method
-		public AppModel getAppModel(): returns the single instance of the class if one exists. Otherwise, the method creates a new instance, stores it as the single instance of the class, and returns it.
 		public UISettings getUISettings(): returns the instance of UISettings stored
 		public void setUISettings(UISettings uiSettings): stores the UISettings instance
 		public JobSettings getJobSettings(): returns the instance of JobSettings stored
