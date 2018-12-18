@@ -56,7 +56,13 @@ This class also uses the singleton design pattern.
 		public void setTheme(ThemeUI theme): changes the current theme to the new option selected by the user
 		public ThemeUI getTheme(): gets the current theme being used/displayed.
 		public void setTopology(bool b): sets the topology attribute to true if the user wishes to view the network topology and false if not.
-		public void setResults(bool b): sets the results attribute to true if the system has classified and results are available and false if not.
+		public void resultsSet(bool b): sets the results attribute to true if the system has classified and results are available and false if not.
+
+}
+
+ThemeUI {
+
+This is an enumeration containing the possible options for the theme of the program.
 
 }
 
