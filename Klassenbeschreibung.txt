@@ -19,17 +19,22 @@ This class is observed for changes by "JobSettingsView".
 This class also uses the singleton design pattern.
 
 	Attributes:
-		private NeuralNetwork neuralNetwork: indicates which neural network is to be used to classify the image.
-		private Performance performance: indicates which performance mode the user has selected to run the classification in.
+		private Net neuralNetwork: indicates which neural network is to be used to classify the image.
+		// private Performance performance: indicates which performance mode the user has selected to run the classification in.
 		private List<Image> images: contains the list of images to be classified.
+        private bool aggregateResults: indicates whether the results for the images classified should be aggregated or not.
 
 	Methods:
-		public NeuralNetwork getNeuralNetwork(): returns the current neural network selected by the user
-		public void setNeuralNetwork(NeuralNetwork neuralNetwork): changes the neuralNetwork attribute to the new selected network.
-		public Performance getPerformance(): returns the current performance mode selected by the user
-		public void setPerformance(Performance performance): changes the performance attribute to the new selected performance mode.
+		public Net getNeuralNetwork(): returns the current neural network selected by the user
+		public void setNeuralNetwork(Net neuralNetwork): changes the neuralNetwork attribute to the new selected network.
+		// public Performance getPerformance(): returns the current performance mode selected by the user
+		// public void setPerformance(Performance performance): changes the performance attribute to the new selected performance mode.
 		public ImageList getImage(): returns the list of the images to be classified
 		public void addImage(Image image): adds an image to the list of images to classify.
+        // public void addWorker(Worker worker):
+        // public void removeWorker(Worker worker):
+        public bool getAggregate(): returns the value stored in the attribute aggregateResults
+        public void setAggregate(bool b): sets the value of aggregateResults to true if the user wishes to do so and false if not.
 
 }
 
