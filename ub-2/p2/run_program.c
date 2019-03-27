@@ -17,6 +17,7 @@ int run_program(char *file_path, char *arguments[]) {
   }
   int child_pid;
   int status;
+  
   child_pid = fork();
   if (child_pid == -1) {
     return ERROR_CODE;
