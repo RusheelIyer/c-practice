@@ -31,6 +31,7 @@ typedef struct _Block {
 
 #define HEADER_SIZE sizeof(Block)
 #define INV_HEADER_SIZE_MASK ~((uint64_t)HEADER_SIZE - 1)
+#define ALLOCATED_BLOCK_MAGIC (Block*)(0xbaadf00d)
 
 /*
  * This is the heap you should use.
@@ -112,11 +113,47 @@ uint64_t roundUp(uint64_t n)
     }
 }
 
+static void *_allocate(Block **blockLink, uint64_t size) {
+
+    Block *freeBlock = *blockLink;
+
+    if (freeBlock->size == size) {
+        *blockLink = freeBlock->next;
+    } else {
+
+        const uint64_t remainingSize = freeBlock->size - size;
+        freeBlock->size = size;
+
+        Block *newFreeBlock = _getNextBlockBySize(freeBlock);
+        newFreeBlock->size  = remainingSize;
+        newFreeBlock->next  = freeBlock->next;
+        
+        *blockLink = newFreeBlock;
+
+    }
+
+    // Mark the current block as allocated by setting a magic next value
+    freeBlock->next = ALLOCATED_BLOCK_MAGIC;
+    return &freeBlock->data[0];
+
+}
+
 void *my_malloc(uint64_t size)
 {
     (void) size;
 
-    // TODO: Implement
+    uint64_t reqSize = roundUp(size) + HEADER_SIZE;
+    Block *current = _firstFreeBlock;
+    Block **link   = &_firstFreeBlock;
+
+    while(current) {
+        if (current->size >= reqSize)
+            return _allocate(link, reqSize);
+
+        link = &current->next;
+        current = current->next;
+    }
+
     return NULL;
 }
 
