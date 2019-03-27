@@ -177,12 +177,17 @@ int startThread(void (*func)(void))
             // without casting. stackTop is thus a pointer to pointers.
             void **stackTop = (void**)(stackBase + STACK_SIZE);
 
-            // ------- Implement thread stack initialization here ---------
+            stackTop--;
+            *stackTop = _parkThread;
 
-            // TODO: prepare the new stack, adjust stackTop.
-            // Remember that stackTop-- decreases the stack pointer by 8 bytes.
+            stackTop--;
+            *stackTop = func;
 
-            // ------------------------------------------------------------
+            stackTop--;
+            
+            *stackTop = stackTop;
+
+            stackTop -= 5;
 
             // We initialized the stack and the thread is ready to run.
             // After setting STATE_READY, the thread is eligible to dispatching
