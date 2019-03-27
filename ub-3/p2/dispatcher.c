@@ -120,16 +120,23 @@ void yield()
 
     // Do the context switch
     __asm__ __volatile__ (
-        // -------------- Implement context switch here ---------------
 
-        // TODO: Implement the context switch using inline assembly.
-        // You can use %%rsp, %%rax, %%r8, etc. to access a register
-        // %[prevSp], %[newSp] get replaced by the previous and new thread
-        // stack pointers
+        "pushq %%rbp\n\t"            // Push registers to old stack
+        "pushq %%rbx\n\t"
+        "pushq %%r12\n\t"
+        "pushq %%r13\n\t"
+        "pushq %%r14\n\t"
+        "pushq %%r15\n\t"
 
-        "nop" // No-operation
+        "movq  %%rsp, %[prevSp]\n\t" // Store current stack pointer
+        "movq  %[newSp], %%rsp\n\t"  // Switch to the new stack
 
-        // ------------------------------------------------------------
+        "popq  %%r15\n\t"            // Pop registers from new stack
+        "popq  %%r14\n\t"
+        "popq  %%r13\n\t"
+        "popq  %%r12\n\t"
+        "popq  %%rbx\n\t"
+        "popq  %%rbp"
 
         : [prevSp]"=m"(_threads[prevThread].currentSP)
         : [newSp]"m"(_threads[_currentThread].currentSP)
