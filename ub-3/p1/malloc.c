@@ -157,11 +157,45 @@ void *my_malloc(uint64_t size)
     return NULL;
 }
 
+static void _tryMerge(Block *freeBlock) {
+    if (freeBlock->next == NULL) {
+        return;
+    }
+
+    const Block *next = _getNextBlockBySize(freeBlock);
+
+    if (next == freeBlock->next) {
+        freeBlock->size += next->size;
+        freeBlock->next = next->next;
+    }
+}
+
 void my_free(void *address)
 {
-    (void) address;
+    if (address == NULL) {
+        return;
+    }
+    Block *block = (Block*)(address) - 1;    
 
-    // TODO: Implement
+    Block *freeBlock = _firstFreeBlock;
+
+    if ((freeBlock == NULL) || (freeBlock > block)) {
+        _firstFreeBlock = block;
+        block->next = freeBlock;
+
+        _tryMerge(block);
+    } else {
+        while ((freeBlock->next != NULL) && (freeBlock->next < block)) {
+            freeBlock = freeBlock->next;
+        }
+
+        block->next = freeBlock->next;
+        freeBlock->next = block;
+
+        _tryMerge(block);
+        _tryMerge(freeBlock);
+    }
+
 }
 
 
