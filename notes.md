@@ -89,3 +89,19 @@ For these to work:
         * Calling external functions works similarly. Instead of producing code that directly calls the imported function, the compiler generates calls that will first fetch the address of the imported function from an address table.
 
 both independent of the mapping address of the library.
+
+# Emulation using IPC
+#### How can you perform asynchronous IPC if your OS only provides synchronous IPC mechanisms?
+Use a separate proxy thread for delivering the asynchronous message via synchronous IPC.
+
+* If the receiver is not waiting for reception, the proxy will block on the send operation.
+* Original thread can continue execution, because it is not responsible for transmitting the message
+* Requires one proxy thread per outstanding asynchronous message
+
+#### How can you perform synchronous IPC if your OS only provides asynchronous IPC mechanisms?
+```
+do {
+    res = async_send(msg, receiver) ;
+} while ( res != MESSAGE SENT ) ;
+```
+* The sender must still be notified by the receiver when the message is received.

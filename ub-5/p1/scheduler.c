@@ -48,7 +48,18 @@ typedef struct _Thread {
 
 Thread _threads[MAX_THREADS] = {{0}};
 
-/* TODO: Add global variables if needed. */
+#define MAX_SEQUENCE_LENGTH 5
+
+/*
+ * The ready queues for each priority.
+ */
+Queue _queues[HIGHEST_PRIORITY + 1] = {{0}};
+
+/*
+ * Counter to determine after how many scheduling decisions a thread of a lower
+ * priority needs to be chosen.
+ */
+int _currentSequence[HIGHEST_PRIORITY + 1] = {0};
 
 /*
  * Adds a new, waiting thread.
@@ -116,7 +127,9 @@ void initScheduler()
  */
 void onThreadReady(int threadId)
 {
-    
+    _threads[threadId].state = STATE_READY;
+    Queue *queue = &_queues[_threads[threadId].priority];
+    _enqueue(queue, threadId);
 }
 
 /*
@@ -125,9 +138,9 @@ void onThreadReady(int threadId)
  */
 void onThreadPreempted(int threadId)
 {
-    (void)threadId;
-
-    // TODO: Implement
+    _threads[threadId].state = STATE_READY;
+    Queue *queue = &_queues[_threads[threadId].priority];
+    _enqueue(queue, threadId);
 }
 
 /*
@@ -135,9 +148,7 @@ void onThreadPreempted(int threadId)
  */
 void onThreadWaiting(int threadId)
 {
-    (void)threadId;
-
-    // TODO: Implement
+    _threads[threadId].state = STATE_WAITING;
 }
 
 /*
@@ -145,6 +156,26 @@ void onThreadWaiting(int threadId)
  */
 int scheduleNextThread()
 {
-    // TODO: Implement
-    return -1;
+    Queue* queue = NULL;
+
+    for (int i = HIGHEST_PRIORITY; i >= 0; i--) {
+        if (_queues[i].head != NULL) {
+            if (_currentSequence[i] >= MAX_SEQUENCE_LENGTH) {
+                _currentSequence[i] = 0;
+            } else {
+                queue = &_queues[i];
+                _currentSequence[i]++;
+                //break the loop
+                i = -1;
+            }
+        }
+    }
+
+    if (queue == NULL) {
+        return -1;
+    }
+
+    int threadId = _dequeue(queue);
+    _threads[threadId].state = STATE_RUNNING;
+    return threadId;
 }
