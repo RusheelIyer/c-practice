@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
         close(pipefd[READ_END]);
         close(pipefd[WRITE_END]);
 
-        execlp("/bin/less", "less", NULL);
+        execlp("/bin/ls", "ls", NULL);
     } else {
         close(pipefd[READ_END]);
         close(pipefd[WRITE_END]);        
