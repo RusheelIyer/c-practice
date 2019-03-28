@@ -20,10 +20,22 @@ int main(int argc, char const *argv[])
 
         execlp("/bin/ls", "ls", NULL);
     } else {
-        close(pipefd[READ_END]);
-        close(pipefd[WRITE_END]);        
 
-        wait(NULL);
-        wait(NULL);
+        pid = fork();
+        if (pid == 0) {
+            dup2(pipefd[WRITE_END], STDOUT_FILENO);
+
+            close(pipefd[READ_END]);
+            close(pipefd[WRITE_END]);
+
+            execlp("/bin/less", "less", NULL);
+
+        } else {
+            close(pipefd[READ_END]);
+            close(pipefd[WRITE_END]);        
+
+            wait(NULL);
+            wait(NULL);
+        }
     }
 }
