@@ -105,3 +105,8 @@ do {
 } while ( res != MESSAGE SENT ) ;
 ```
 * The sender must still be notified by the receiver when the message is received.
+
+# Futex
+Combine the advantages of (user-mode) spinlocks (no kernel entries necessary) and mutexes (no busy waiting).
+
+Before a thread blocks on the mutex and thus needs to enter the kernel, it first spins a certain time in user-mode, trying to acquire the spinlock. This way, the futex tries to avoid the costly blocking wait in the kernel.

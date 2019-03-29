@@ -1,0 +1,48 @@
+Usage of tests
+--------------
+
+ - Run `make` to compile your solution and all tests. Run `ls test_*` to see the
+   resulting test executables. Each test is built from a file in the `tests`
+   directory. You can run the test executables directly. They will print the
+   status of each test assertion and a summary at the end.
+
+ - Run `make run-tests` to compile and run all tests at once through a test
+   runner (which needs Bash and GNU AWK). The test runner will only print test
+   assertions and a summary. Run the test executables directly to see output
+   from your code. On Ubuntu run 'sudo apt-get install gawk' to install GNU AWK.
+
+ - To compile and test the solution, run `make solution` and
+   `make run-tests-solution`.
+
+Test Internals
+--------------
+
+This section explains programming techniques the tests use. You don't have to
+understand how the tests work, but the summary here may help you debug test
+failures.
+
+ - *Simple tests*: Most tests just run your functions and check the output.
+   Examples: All tests in asst01/p2 and asst03/p1
+
+ - *Overriding tests*: Some tests override functions from the standard C library
+   by defining a function with identical prototype. In these tests, your code
+   will call the replacement function which allows checking function arguments.
+   The original function from the standard library is not accessible.
+   Examples: asst12/p2/test_parse_getopt
+
+ - *Wrapping tests*: Some tests wrap functions from the standard C library by
+   specifying the linker flag `-Wl,--wrap=some_function` (see Makefile). The
+   linker will link calls to `some_function()` to `__wrap_some_function()`,
+   which we define in the test. We can check function arguments there and call
+   the original function as `__real_some_function()`.
+   Examples: Tests in asst01/p1
+
+ - *Weak symbols*: The techniques above only work for external functions in the
+   standard C library. To override local functions from the assignment template,
+   we declare them as "weak" in the header file and provide a new definition in
+   the test.
+   Examples: asst11/p1/test_swapOut_disk_offset; asst12/p1/test_filter
+ 
+ - *LeakSanitizer-based tests*: These tests link with the `-fsanitize=leak` flag
+   (see Makefile) to check for missing `free()` calls.
+   Examples: asst05/p1/{test_queue_leaks,test_scheduler_leaks}
