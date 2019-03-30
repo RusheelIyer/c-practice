@@ -110,3 +110,9 @@ do {
 Combine the advantages of (user-mode) spinlocks (no kernel entries necessary) and mutexes (no busy waiting).
 
 Before a thread blocks on the mutex and thus needs to enter the kernel, it first spins a certain time in user-mode, trying to acquire the spinlock. This way, the futex tries to avoid the costly blocking wait in the kernel.
+
+# Segmentation
+MMU has 2 registers:
+
+1. One that contains the physcial address of the segment table
+2. One that specifies the size of the table
