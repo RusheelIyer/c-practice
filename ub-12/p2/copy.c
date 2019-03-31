@@ -53,9 +53,32 @@ int doCopy(CopyArgs* args)
         return -1;
     }
 
-    // ----------------
-    // Copy the file.
-    // ----------------
+    int ret = 0;
+    int fd_from = open(args->from, O_RDONLY);
+    int fd_to = open(args->to, O_EXCL|O_CREAT);
 
-    return -1;
+    if ((fd_from == -1) || (fd_to == -1)) {
+        ret = -1;
+        goto closeFiles;
+    }
+
+    int fileSize = lseek(fd_from, 0, SEEK_END);
+
+    ssize_t readFrom = read(fd_from, _buffer, fileSize);
+    if (readFrom == -1) {
+        ret = -1;
+        goto closeFiles;
+    }
+
+    ssize_t writeTo = write(fd_to, _buffer, fileSize);
+
+    if (writeTo == -1) {
+        ret = -1;
+        goto closeFiles;
+    }
+
+    closeFiles: close(fd_from);
+    close(fd_to);
+
+    return ret;
 }
