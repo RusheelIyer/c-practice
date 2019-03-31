@@ -116,3 +116,24 @@ MMU has 2 registers:
 
 1. One that contains the physcial address of the segment table
 2. One that specifies the size of the table
+
+# `lseek`
+`off_t lseek(int fd, off_t offset, int whence)`
+
+Sets the current position in the file `fd` to `offset`, relative to the location specified by `whence`.
+
+* `SEEK_SET`: Pointer is set to the offset's byte.
+* `SEEK_CUR`: Pointer is set to its current location plus `offset` bytes.
+* `SEEK_END`: Pointer is set to the size of the file plus `offset` bytes.
+
+## Alternative random access implementations
+1. Add another parameter to `read`/ `write` system calls, which supplies the offset to access.
+    * Application programmer or library code must now track the current file position to pass it on to the system calls every time
+2. Map the file (or parts thereof) into the virtual address space of the process.
+    * Allows for full random access without performing system calls for the accesses at all.
+    * Accesses may, however, trigger one or more page faults.
+
+# List files in dir
+1. `opendir`
+2. Call `readdir` repeatedly, receiving `dirent` structures that contain information on a single file in the directory or `NULL` when there are no more files.
+3. `closedir`
