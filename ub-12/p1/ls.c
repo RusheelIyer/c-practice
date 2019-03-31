@@ -18,6 +18,7 @@ void _printLine(unsigned int size, unsigned int sizeOnDisk, const char* name)
 // Assume this to be the maximum length of a file name returned by readdir
 #define MAX_FILE_NAME_LENGTH 255
 
+<<<<<<< HEAD
 // Returns 1 if the file should be shown, 0 if not
 static inline int filename(const char* name, const char* extension) {
 
@@ -51,6 +52,8 @@ static inline int filename(const char* name, const char* extension) {
 
 }
 
+=======
+>>>>>>> 1362c9ca5b9d68c63c2a1bac36d4320712cd5e1c
 int list(const char* path, const char* filterByExtension)
 {
     (void)filterByExtension;
@@ -65,10 +68,15 @@ int list(const char* path, const char* filterByExtension)
 
         stat(curFile->d_name, &statbuf);
 
+<<<<<<< HEAD
         if (filename(curFile->d_name, filterByExtension) == 1)
             _printLine(statbuf.st_size, 512 * (statbuf.st_blocks),
             curFile->d_name);
 
+=======
+        _printLine(statbuf.st_size, 512 * (statbuf.st_blocks),
+            curFile->d_name);
+>>>>>>> 1362c9ca5b9d68c63c2a1bac36d4320712cd5e1c
         curFile = readdir(dir);
     }
 
