@@ -42,7 +42,7 @@ int parseCopyArgs(int argc, char* const argv[], CopyArgs* args)
     }
 
     args->from = argv[optind];
-    args->to   = argv[optind + 1];
+    args->to = argv[optind + 1];
 
     return 0;
 }
@@ -55,7 +55,7 @@ int doCopy(CopyArgs* args)
 
     int ret = 0;
     int fd_from = open(args->from, O_RDONLY);
-    int fd_to = open(args->to, O_EXCL|O_CREAT);
+    int fd_to = open(args->to, O_EXCL | O_CREAT);
 
     if ((fd_from == -1) || (fd_to == -1)) {
         ret = -1;
@@ -77,8 +77,12 @@ int doCopy(CopyArgs* args)
         goto closeFiles;
     }
 
-    closeFiles: close(fd_from);
-    close(fd_to);
+closeFiles:
+    if (close(fd_from) != 0)
+        ret = -1;
+
+    if (close(fd_to) != 0)
+        ret = -1;
 
     return ret;
 }
