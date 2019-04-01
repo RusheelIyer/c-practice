@@ -26,13 +26,12 @@ FileSystem* mapFileSystem(char* diskFile)
 
     void* map = mmap(diskFile, statbuffer.st_size, PROT_READ, MAP_PRIVATE,
         fd, 0);
-    if (map == (void *)-1) {
+    if (map == (void*)-1) {
         close(fd);
         return NULL;
     }
 
-    return (FileSystem*) map;
-
+    return (FileSystem*)map;
 }
 
 static OpenFileHandle* _openFileAtBlock(FileSystem* fs, uint32_t blockIndex,
@@ -111,12 +110,18 @@ static char _readFileByte(OpenFileHandle* handle)
     assert(handle->fileSystem != NULL);
     assert(handle->currentBlock < FILE_SYSTEM_BLOCKS);
 
-    // ----------------
-    // Read a byte from the file. This should never fail, because the function
-    // must not be called if there are not more bytes to read.
-    // ----------------
+    FileSystem* fs = handle->fileSystem;
 
-    return 0;
+    uint32_t offsetInBlock = handle->currentFileOffset % BLOCK_SIZE;
+    char readByte = fs->blocks[handle->currentBlock].data[offsetInBlock];
+
+    if (offsetInBlock == BLOCK_SIZE - 1) {
+        handle->currentBlock = fs->fat[handle->currentBlock];
+    }
+
+    handle->currentFileOffset++;
+    return readByte;
+
 }
 
 // This acts like the default linux read() system call on your file.
