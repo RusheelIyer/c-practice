@@ -1,0 +1,96 @@
+#!/bin/bash
+
+# Test runner parsing the limited subset of TAP the testlib produces.
+
+declare -a passed failed
+
+for test in $@; do
+	echo [33mBEGIN $test[0m
+
+	"$test" | gawk '
+function colorize(str, color) {
+	return "[" color "m" str "[0m";
+}
+
+function join(array, sep,     res) {
+	res = "";
+	for (i in array) {
+		if (res) res = res sep;
+		res = res array[i];
+	}
+	return res
+}
+
+BEGIN {
+	planned = -1;
+	plan_seen = 0;
+	test_count = 0;
+	failed_count = 0;
+}
+
+/^1\.\.[0-9]+/ && !plan_seen {
+	planned = substr($1, 4);
+	plan_seen = 1;
+}
+
+/^(not )?ok\>/ {
+	test_count++;
+	if ($1 == "not") {
+		failed_tests[failed_count++] = test_count;
+		status = "FAIL";
+		color = 31;
+		desc = substr($0, 7);
+	} else {
+		status = "PASS";
+		color = 32;
+		desc = substr($0, 3);
+	}
+	print colorize(status, color) desc
+}
+
+# Print extra info after failing tests.
+/^#/ && status == "FAIL" { print colorize($0, 37) }
+
+/^Bail out!/ {
+	print colorize($0, 31);
+	exit 1;
+}
+
+# Print everything before the first test.
+!status && !plan_seen
+
+END {
+	success = 1;
+	if (!plan_seen) {
+		print colorize("No test plan, test crashed?", 31);
+		success = 0;
+	} else if (planned != test_count) {
+		print colorize("Planned " planned " tests, but " test_count " were executed. Your code might be missing some essential function calls.", 31);
+		success = 0;
+	}
+	if (failed_count > 0) {
+		print colorize("FAILED test cases " join(failed_tests, ", "), 31);
+		print "Failed", failed_count "/" test_count, "test cases,", sprintf("%.2f%% okay", (test_count-failed_count)/test_count*100);
+		success = 0;
+	}
+	if (success) {
+		print colorize("All test cases passed", 32);
+	}
+	exit !success
+}
+	'
+	if [[ $? == 0 ]]; then
+		passed+=($test)
+	else
+		failed+=($test)
+	fi
+	echo [33mEND $test[0m
+	echo
+done
+
+if [[ ${#passed[@]} > 0 ]]; then
+	echo [32mPassed ${#passed[@]} tests: ${passed[@]}[0m
+fi
+if [[ ${#failed[@]} > 0 ]]; then
+	echo [31mFailed ${#failed[@]} tests: ${failed[@]}[0m
+fi

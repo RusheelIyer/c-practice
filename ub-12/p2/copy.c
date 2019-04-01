@@ -64,6 +64,11 @@ int doCopy(CopyArgs* args)
 
     int fileSize = lseek(fd_from, 0, SEEK_END);
 
+    if (fileSize == -1) {
+        ret = -1;
+        goto closeFiles;
+    }
+
     ssize_t readFrom = read(fd_from, _buffer, fileSize);
     if (readFrom == -1) {
         ret = -1;
