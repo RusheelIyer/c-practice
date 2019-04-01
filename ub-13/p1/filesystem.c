@@ -65,6 +65,8 @@ static int _hasMoreBytes(OpenFileHandle* handle)
     return 0;
 }
 
+#define INVALID_BLOCK_INDEX (uint32_t) - 1
+
 OpenFileHandle* openFile(FileSystem* fs, char* name)
 {
     if ((fs == NULL) || (name == NULL)) {
@@ -78,17 +80,31 @@ OpenFileHandle* openFile(FileSystem* fs, char* name)
         return NULL;
     }
 
-    // ----------------
-    // Find the directory entry with that name.
-    // You can use readFile to read from the directory stream.
-    // ----------------
+    uint32_t startBlock = INVALID_BLOCK_INDEX;
+    uint32_t length;
+
+    // We scan through the directory file to locate the requested file. With
+    // each iteration, we read a single directory entry (struct DirectoryEntry).
+    while (_hasMoreBytes(root)) {
+        DirectoryEntry entry;
+
+        int readBytes = readFile(root, (void*)&entry, sizeof(DirectoryEntry));
+        if (readBytes != sizeof(DirectoryEntry)) {
+            break; // A read error occurred. This should not happen!
+        }
+
+        // Check if this is the file that we are looking for.
+        if (strcmp(entry.name, name) == 0) {
+            startBlock = entry.firstBlock;
+            length = entry.length;
+
+            break;
+        }
+    }
 
     closeFile(root);
 
-    // ----------------
-    // Return a file handle if the file could be found.
-    // ----------------
-    return NULL;
+    return (startBlock != INVALID_BLOCK_INDEX) ? _openFileAtBlock(fs, startBlock, length) : NULL;
 }
 
 void closeFile(OpenFileHandle* handle)
@@ -121,7 +137,6 @@ static char _readFileByte(OpenFileHandle* handle)
 
     handle->currentFileOffset++;
     return readByte;
-
 }
 
 // This acts like the default linux read() system call on your file.
